@@ -1,0 +1,94 @@
+
+//LIGHT TIMER
+
+
+#include <Wire.h>
+#include "RTClib.h"
+
+
+// these arrays store timer data
+// on hour, on minute, off hour, off minute
+int t1[4]= {
+  6,00,18,00};
+int t2[4]= {
+  16,00,8,00};
+
+#define timer1pin 7
+#define timer2pin 9
+
+
+RTC_DS1307 RTC; // define the Real Time Clock object
+
+
+void setup()
+{
+
+  // start serial port
+  Serial.begin(57600);
+
+  pinMode(timer1pin, OUTPUT);
+  pinMode(timer2pin, OUTPUT);
+
+  // connect to RTC
+  Wire.begin();  
+  RTC.begin();
+
+  if (!RTC.isrunning()) {
+
+    Serial.println("RTC is not running");
+    }
+}
+
+void loop()
+{ 
+  DateTime now = RTC.now();
+
+  Serial.print(now.unixtime()); // seconds since 1/1/1970
+  Serial.print(", ");
+  Serial.print('"');
+  Serial.print(now.year(), DEC);
+  Serial.print("/");
+  Serial.print(now.month(), DEC);
+  Serial.print("/");
+  Serial.print(now.day(), DEC);
+  Serial.print(" ");
+  Serial.print(now.hour(), DEC);
+  Serial.print(":");
+  Serial.print(now.minute(), DEC);
+  Serial.print(":");
+  Serial.print(now.second(), DEC);
+  Serial.print('"');
+  Serial.println();
+     
+  // check for timer1 on/off
+  {
+    if (now.hour()==t1[0] && now.minute()==t1[1])
+    {
+      digitalWrite (7, HIGH); 
+    }
+    if (now.hour()==t1[2] && now.minute()==t1[3])
+    {
+      digitalWrite (7, LOW);
+    } 
+  }
+
+
+  // check for timer2 on/off
+
+  {
+    if ((now.hour()==t2[0] && now.minute()==t2[1])) 
+       {  
+         digitalWrite (9, HIGH);
+    }
+    if (now.hour()==t2[2] && now.minute()==t2[3])
+   
+    {
+      digitalWrite (9, LOW);
+    }
+  }
+
+}  
+
+
+
+
